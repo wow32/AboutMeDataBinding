@@ -3,45 +3,48 @@ package com.example.aboutme
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import org.w3c.dom.Text
+import androidx.databinding.DataBindingUtil
+import com.example.aboutme.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+
+    private val name: MyName = MyName("Richie Lee")
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //user click done button
-        findViewById<Button>(R.id.done_button).setOnClickListener{
+        //bind to activity_main first
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-            val editText = findViewById<EditText>(R.id.nickname_edit)
-            val nicknameTextView = findViewById<TextView>(R.id.nickname_text)
-            var userClickButton = findViewById<Button>(R.id.done_button)
+        //set name value to myName
+        binding.myName = name
 
-            //show nickname
-            nicknameTextView.text = editText.text
-            nicknameTextView.visibility = View.VISIBLE
+        binding.doneButton.setOnClickListener {
 
-            //hide input and button
-            editText.visibility = View.GONE
-            userClickButton.visibility = View.GONE
+            binding.apply {
+                myName?.nickname = nicknameEdit.text.toString()
 
-            //hide keyboard?
+                //refresh UI on change
+                invalidateAll()
+
+                nicknameEdit.visibility = View.GONE
+                doneButton.visibility = View.GONE
+                nicknameText.visibility = View.VISIBLE
+            }
         }
 
-        //user click input box after done button?
-        findViewById<TextView>(R.id.nickname_text).setOnClickListener{
-            val ediText = findViewById<EditText>(R.id.nickname_edit)
-            val doneButton = findViewById<Button>(R.id.done_button)
-            val inputBox = findViewById<TextView>(R.id.nickname_text)
+        binding.nicknameText.setOnClickListener {
 
-            ediText.visibility = View.VISIBLE
-            doneButton.visibility = View.VISIBLE
-            inputBox.visibility = View.GONE
-
-            ediText.requestFocus()
+            binding.apply {
+                binding.nicknameEdit.visibility = View.VISIBLE
+                binding.doneButton.visibility = View.VISIBLE
+                binding.nicknameText.visibility = View.GONE
+                binding.nicknameEdit.requestFocus()
+            }
         }
     }
 
